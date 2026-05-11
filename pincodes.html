@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GSK Pin Code Directory — Search service providers by pin code." />
+    <title>Pincodes — GSK Agent Hub</title>
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand">
+          <div class="nav-brand-icon">⚡</div>
+          <div class="nav-brand-text"><span>GSK</span> Agent Hub</div>
+        </a>
+        <a href="index.html" class="nav-back" id="nav-back-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Back
+        </a>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header animate-in">
+      <h1><span class="gradient-text">Pin Code</span> Directory</h1>
+      <p class="subtitle">Search any 6-digit pin code to find the assigned service provider, tier, and turnaround time.</p>
+    </header>
+
+    <!-- Search & Results -->
+    <main class="page-content">
+      <div class="search-wrapper animate-in animate-in-delay-1">
+        <input
+          type="text"
+          id="searchBox"
+          class="search-input"
+          placeholder="Enter 6-digit Pin Code..."
+          onkeyup="searchPin()"
+          autocomplete="off"
+          maxlength="6"
+          inputmode="numeric"
+        />
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+
+      <div id="errorMsg" class="error-msg">Pin code not found in the directory.</div>
+
+      <div id="bentoResults" class="bento-grid">
+        <div class="bento-card card-full">
+          <span class="bento-label">Service Provider Name</span>
+          <p class="bento-value" id="resName">-</p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-label">Tier</span>
+          <p class="bento-value" id="resTier">-</p>
+        </div>
+
+        <div class="bento-card">
+          <span class="bento-label">Site Code</span>
+          <p class="bento-value" id="resSite">-</p>
+        </div>
+
+        <div class="bento-card card-full">
+          <span class="bento-label">Turnaround Time (TAT)</span>
+          <p class="bento-value" id="resTat">-</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Load the pincode database -->
+    <script src="pincode-data.js"></script>
+
+    <script>
+      function searchPin() {
+        let input = document.getElementById("searchBox").value.trim();
+        let bentoGrid = document.getElementById("bentoResults");
+        let errorMsg = document.getElementById("errorMsg");
+
+        // If the search box is empty, hide everything
+        if (input === "") {
+          bentoGrid.classList.remove("show");
+          errorMsg.style.display = "none";
+          return;
+        }
+
+        // Search the database
+        let found = database.find((row) => row.PinCode === input);
+
+        if (found) {
+          // Populate the bento cards
+          document.getElementById("resName").innerText = found.Name;
+          document.getElementById("resTier").innerText = found.Tier;
+          document.getElementById("resSite").innerText = found.Site;
+          document.getElementById("resTat").innerText = found.Tat;
+
+          // Show the grid, hide error
+          bentoGrid.classList.add("show");
+          errorMsg.style.display = "none";
+        } else {
+          // Hide the grid, show error
+          bentoGrid.classList.remove("show");
+          errorMsg.style.display = "block";
+        }
+      }
+    </script>
+  </body>
+</html>
