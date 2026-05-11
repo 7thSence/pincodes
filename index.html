@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,9 +12,11 @@
     body::after {
       content: '';
       position: fixed;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
-      top: -200px; right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+      top: -200px;
+      right: -200px;
       border-radius: 50%;
       pointer-events: none;
       z-index: 0;
@@ -21,9 +24,19 @@
     }
 
     @keyframes floatOrb {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(-60px, 40px) scale(1.1); }
-      66% { transform: translate(30px, -30px) scale(0.95); }
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(-60px, 40px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(30px, -30px) scale(0.95);
+      }
     }
 
     /* Hero Section */
@@ -52,15 +65,25 @@
     }
 
     .hero-badge .pulse-dot {
-      width: 7px; height: 7px;
+      width: 7px;
+      height: 7px;
       background: var(--accent-green);
       border-radius: 50%;
       animation: pulse 2s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.7); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.7);
+      }
     }
 
     .hero h1 {
@@ -82,8 +105,15 @@
     }
 
     @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
     .hero .subtitle {
@@ -103,6 +133,7 @@
       font-variant-numeric: tabular-nums;
       animation: fadeInUp 0.6s var(--ease-out) 0.3s both;
     }
+
     .hero-clock span {
       color: var(--text-secondary);
       font-weight: 600;
@@ -145,7 +176,9 @@
     .home-tile::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 3px;
       background: var(--tile-gradient);
       opacity: 0;
@@ -156,9 +189,11 @@
     .home-tile::after {
       content: '';
       position: absolute;
-      top: 0; left: -100%;
-      width: 60%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
       transition: none;
     }
 
@@ -169,7 +204,9 @@
       box-shadow: var(--tile-shadow);
     }
 
-    .home-tile:hover::before { opacity: 1; }
+    .home-tile:hover::before {
+      opacity: 1;
+    }
 
     .home-tile:hover::after {
       left: 100%;
@@ -182,7 +219,8 @@
 
     /* Tile icon */
     .home-tile-icon {
-      width: 64px; height: 64px;
+      width: 64px;
+      height: 64px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
@@ -217,7 +255,8 @@
 
     .home-tile-arrow {
       position: absolute;
-      bottom: 14px; right: 16px;
+      bottom: 14px;
+      right: 16px;
       opacity: 0;
       transform: translateX(-6px);
       transition: all var(--duration-fast) ease;
@@ -232,27 +271,29 @@
     /* Tile color variants */
     .t-purple {
       --tile-gradient: linear-gradient(135deg, #a78bfa, #8b5cf6);
-      --tile-border-hover: rgba(139,92,246,0.35);
-      --tile-shadow: 0 12px 40px rgba(139,92,246,0.15), 0 0 0 1px rgba(139,92,246,0.1);
-      --tile-icon-bg: rgba(139,92,246,0.12);
+      --tile-border-hover: rgba(139, 92, 246, 0.35);
+      --tile-shadow: 0 12px 40px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.1);
+      --tile-icon-bg: rgba(139, 92, 246, 0.12);
       --tile-icon-color: #a78bfa;
-      --tile-icon-glow: rgba(139,92,246,0.2);
+      --tile-icon-glow: rgba(139, 92, 246, 0.2);
     }
+
     .t-blue {
       --tile-gradient: linear-gradient(135deg, #60a5fa, #3b82f6);
-      --tile-border-hover: rgba(59,130,246,0.35);
-      --tile-shadow: 0 12px 40px rgba(59,130,246,0.15), 0 0 0 1px rgba(59,130,246,0.1);
-      --tile-icon-bg: rgba(59,130,246,0.12);
+      --tile-border-hover: rgba(59, 130, 246, 0.35);
+      --tile-shadow: 0 12px 40px rgba(59, 130, 246, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+      --tile-icon-bg: rgba(59, 130, 246, 0.12);
       --tile-icon-color: #60a5fa;
-      --tile-icon-glow: rgba(59,130,246,0.2);
+      --tile-icon-glow: rgba(59, 130, 246, 0.2);
     }
+
     .t-cyan {
       --tile-gradient: linear-gradient(135deg, #22d3ee, #06b6d4);
-      --tile-border-hover: rgba(6,182,212,0.35);
-      --tile-shadow: 0 12px 40px rgba(6,182,212,0.15), 0 0 0 1px rgba(6,182,212,0.1);
-      --tile-icon-bg: rgba(6,182,212,0.12);
+      --tile-border-hover: rgba(6, 182, 212, 0.35);
+      --tile-shadow: 0 12px 40px rgba(6, 182, 212, 0.15), 0 0 0 1px rgba(6, 182, 212, 0.1);
+      --tile-icon-bg: rgba(6, 182, 212, 0.12);
       --tile-icon-color: #22d3ee;
-      --tile-icon-glow: rgba(6,182,212,0.2);
+      --tile-icon-glow: rgba(6, 182, 212, 0.2);
     }
 
     /* Stats bar */
@@ -305,19 +346,44 @@
         gap: 14px;
         max-width: 400px;
       }
+
       .home-tile {
         flex-direction: row;
         padding: 22px 20px;
         gap: 16px;
         text-align: left;
       }
-      .home-tile-icon { width: 50px; height: 50px; flex-shrink: 0; }
-      .home-tile-label, .home-tile-desc { text-align: left; }
-      .home-tile-desc { margin-top: 0; }
-      .home-tile:hover { transform: translateX(6px) translateY(0); }
-      .hero { padding: 40px 20px 16px; }
-      .stats-bar { gap: 24px; }
-      .stat-value { font-size: 1.2rem; }
+
+      .home-tile-icon {
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+      }
+
+      .home-tile-label,
+      .home-tile-desc {
+        text-align: left;
+      }
+
+      .home-tile-desc {
+        margin-top: 0;
+      }
+
+      .home-tile:hover {
+        transform: translateX(6px) translateY(0);
+      }
+
+      .hero {
+        padding: 40px 20px 16px;
+      }
+
+      .stats-bar {
+        gap: 24px;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+      }
     }
 
     /* ---- Poster Popup Overlay ---- */
@@ -342,16 +408,35 @@
     }
 
     @keyframes posterFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
+
     @keyframes posterFadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
     }
+
     @keyframes posterSlideUp {
-      from { opacity: 0; transform: translateY(30px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .poster-card {
@@ -362,7 +447,7 @@
       border: 1px solid var(--border-card);
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.08);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.08);
       animation: posterSlideUp 0.5s var(--ease-out) 0.1s both;
     }
 
@@ -381,7 +466,8 @@
     }
 
     .poster-header-dot {
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       background: var(--accent-orange);
       border-radius: 50%;
       animation: pulse 1.5s ease-in-out infinite;
@@ -408,8 +494,14 @@
       padding: 28px 28px 20px;
     }
 
-    .poster-content::-webkit-scrollbar { width: 4px; }
-    .poster-content::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: 10px; }
+    .poster-content::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .poster-content::-webkit-scrollbar-thumb {
+      background: var(--border-card);
+      border-radius: 10px;
+    }
 
     .poster-content h2 {
       font-size: 1.3rem;
@@ -518,30 +610,41 @@
       letter-spacing: 0.02em;
     }
 
-    .poster-btn svg { width: 16px; height: 16px; }
+    .poster-btn svg {
+      width: 16px;
+      height: 16px;
+    }
 
     .poster-btn-yes {
       color: #fff;
       background: linear-gradient(135deg, #10b981, #059669);
       box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
     }
+
     .poster-btn-yes:hover {
       transform: translateY(-2px) scale(1.03);
       box-shadow: 0 8px 30px rgba(16, 185, 129, 0.45);
     }
-    .poster-btn-yes:active { transform: translateY(0) scale(0.98); }
+
+    .poster-btn-yes:active {
+      transform: translateY(0) scale(0.98);
+    }
 
     .poster-btn-no {
       color: var(--accent-red);
       background: transparent;
       border: 1.5px solid rgba(239, 68, 68, 0.3);
     }
+
     .poster-btn-no:hover {
       background: rgba(239, 68, 68, 0.08);
       border-color: var(--accent-red);
       transform: translateY(-2px);
     }
-    .poster-btn-no:active { transform: translateY(0) scale(0.98); }
+
+    .poster-btn-no:active {
+      transform: translateY(0) scale(0.98);
+    }
 
     /* WhatsApp TL Panel */
     .poster-wa-panel {
@@ -550,7 +653,10 @@
       text-align: center;
       animation: fadeInUp 0.3s var(--ease-out) both;
     }
-    .poster-wa-panel.show { display: block; }
+
+    .poster-wa-panel.show {
+      display: block;
+    }
 
     .poster-wa-text {
       font-size: 0.82rem;
@@ -575,19 +681,35 @@
       transition: all var(--duration-normal) var(--ease-spring);
       box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
     }
+
     .poster-wa-btn:hover {
       transform: translateY(-2px) scale(1.03);
       box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45);
     }
-    .poster-wa-btn svg { width: 20px; height: 20px; fill: #fff; }
+
+    .poster-wa-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
 
     @media (max-width: 600px) {
-      .poster-card { border-radius: var(--radius-md); }
-      .poster-btn { padding: 11px 20px; font-size: 0.8rem; }
-      .poster-btn-row { flex-direction: column; }
+      .poster-card {
+        border-radius: var(--radius-md);
+      }
+
+      .poster-btn {
+        padding: 11px 20px;
+        font-size: 0.8rem;
+      }
+
+      .poster-btn-row {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Poster Popup Overlay (controlled by JS) -->
@@ -603,7 +725,8 @@
       <!-- ============ DAILY POSTER CONTENT — UPDATE THIS SECTION ============ -->
       <div class="poster-content" id="posterContent">
         <h2>📝 <span class="pc-accent">Team Update — Approved Call Descriptions</span></h2>
-        <p class="pc-subtitle">Use <strong>only</strong> the descriptions listed below while logging calls. Do not leave the description field empty.</p>
+        <p class="pc-subtitle">Use <strong>only</strong> the descriptions listed below while logging calls. Do not leave
+          the description field empty.</p>
 
         <div class="pc-section">
           <div class="pc-section-title">📌 Approved Descriptions — Use Only These</div>
@@ -636,31 +759,40 @@
         </div>
 
         <div class="pc-highlight">
-          <strong>⚠️ Reminder:</strong> Do <strong>NOT</strong> leave the description field empty. Always select one of the above descriptions for every call logged.
+          <strong>⚠️ Reminder:</strong> Do <strong>NOT</strong> leave the description field empty. Always select one of
+          the above descriptions for every call logged.
         </div>
       </div>
       <!-- ============ END DAILY POSTER CONTENT ============ -->
       <div class="poster-footer">
         <div class="poster-btn-row" id="posterBtnRow">
           <button class="poster-btn poster-btn-yes" id="posterYesBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
             </svg>
             I Have Understood
           </button>
           <button class="poster-btn poster-btn-no" id="posterNoBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             Not Understood
           </button>
         </div>
         <div class="poster-wa-panel" id="posterWaPanel">
           <p class="poster-wa-text">Connect with your Team Lead for clarification:</p>
-          <a href="https://wa.me/919560903198?text=Hi%20TL%2C%20I%20need%20clarification%20on%20today's%20update." target="_blank" class="poster-wa-btn">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+          <a href="https://wa.me/919560903198?text=Hi%20TL%2C%20I%20need%20clarification%20on%20today's%20update."
+            target="_blank" class="poster-wa-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+              <path
+                d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" />
+            </svg>
             Chat with TL on WhatsApp
           </a>
         </div>
@@ -685,7 +817,8 @@
       Agent Portal v2.0
     </div>
     <h1 id="greeting">Your <span class="gradient-text">Agent Toolkit</span></h1>
-    <p class="subtitle">Everything you need while handling calls — search codes, check pincodes, find service mappings — all in one place.</p>
+    <p class="subtitle">Everything you need while handling calls — search codes, check pincodes, find service mappings —
+      all in one place.</p>
     <div class="hero-clock">
       <span id="liveTime"></span> · <span id="liveDate"></span>
     </div>
@@ -716,14 +849,18 @@
     <a href="pincodes.html" class="home-tile-link" id="tile-pincodes">
       <div class="home-tile t-purple animate-in animate-in-delay-1">
         <div class="home-tile-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-            <circle cx="12" cy="10" r="3"/>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
           </svg>
         </div>
         <span class="home-tile-label">Pincodes</span>
         <span class="home-tile-desc">Search service providers by pin code</span>
-        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
       </div>
     </a>
 
@@ -731,15 +868,19 @@
     <a href="article-codes.html" class="home-tile-link" id="tile-article-codes">
       <div class="home-tile t-blue animate-in animate-in-delay-2">
         <div class="home-tile-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
           </svg>
         </div>
         <span class="home-tile-label">Article Codes</span>
         <span class="home-tile-desc">IBASE product lookup &amp; search</span>
-        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
       </div>
     </a>
 
@@ -747,16 +888,20 @@
     <a href="series-6.html" class="home-tile-link" id="tile-series-6">
       <div class="home-tile t-cyan animate-in animate-in-delay-3">
         <div class="home-tile-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"/>
-            <rect x="14" y="3" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
           </svg>
         </div>
         <span class="home-tile-label">6-Series</span>
         <span class="home-tile-desc">Service mapping &amp; article codes</span>
-        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg class="home-tile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
       </div>
     </a>
 
@@ -764,7 +909,7 @@
 
   <!-- Footer -->
   <footer class="dashboard-footer">
-    GSK Agent Hub &middot; Internal Use Only
+    GSK Agent Hub &middot; Team GSK Use Only
   </footer>
 
   <script>
@@ -786,7 +931,7 @@
 
     // Ripple on tile click
     document.querySelectorAll('.home-tile').forEach(tile => {
-      tile.addEventListener('click', function(e) {
+      tile.addEventListener('click', function (e) {
         const ripple = document.createElement('span');
         const rect = this.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
@@ -833,7 +978,7 @@
           if (data.version === POSTER_VERSION && elapsed < cooldownMs) {
             shouldShow = false;
           }
-        } catch(e) { /* corrupted data, show popup */ }
+        } catch (e) { /* corrupted data, show popup */ }
       }
 
       if (shouldShow) {
@@ -858,4 +1003,5 @@
     })();
   </script>
 </body>
+
 </html>
