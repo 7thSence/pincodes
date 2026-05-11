@@ -490,45 +490,101 @@
     .poster-footer {
       padding: 18px 20px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      gap: 12px;
       border-top: 1px solid var(--border-subtle);
     }
 
-    .poster-read-btn {
+    .poster-btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .poster-btn {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px 36px;
-      font-size: 0.9rem;
+      gap: 8px;
+      padding: 13px 28px;
+      font-size: 0.85rem;
       font-family: var(--font-family);
       font-weight: 700;
-      color: #fff;
-      background: var(--gradient-primary);
       border: none;
       border-radius: var(--radius-full);
       cursor: pointer;
       transition: all var(--duration-normal) var(--ease-spring);
-      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
       letter-spacing: 0.02em;
     }
 
-    .poster-read-btn:hover {
+    .poster-btn svg { width: 16px; height: 16px; }
+
+    .poster-btn-yes {
+      color: #fff;
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    }
+    .poster-btn-yes:hover {
       transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.45);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.45);
+    }
+    .poster-btn-yes:active { transform: translateY(0) scale(0.98); }
+
+    .poster-btn-no {
+      color: var(--accent-red);
+      background: transparent;
+      border: 1.5px solid rgba(239, 68, 68, 0.3);
+    }
+    .poster-btn-no:hover {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: var(--accent-red);
+      transform: translateY(-2px);
+    }
+    .poster-btn-no:active { transform: translateY(0) scale(0.98); }
+
+    /* WhatsApp TL Panel */
+    .poster-wa-panel {
+      display: none;
+      width: 100%;
+      text-align: center;
+      animation: fadeInUp 0.3s var(--ease-out) both;
+    }
+    .poster-wa-panel.show { display: block; }
+
+    .poster-wa-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
 
-    .poster-read-btn:active {
-      transform: translateY(0) scale(0.98);
+    .poster-wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 30px;
+      font-size: 0.88rem;
+      font-family: var(--font-family);
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all var(--duration-normal) var(--ease-spring);
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
     }
-
-    .poster-read-btn svg {
-      width: 18px; height: 18px;
+    .poster-wa-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45);
     }
+    .poster-wa-btn svg { width: 20px; height: 20px; fill: #fff; }
 
     @media (max-width: 600px) {
       .poster-card { border-radius: var(--radius-md); }
-      .poster-read-btn { padding: 12px 28px; font-size: 0.85rem; }
+      .poster-btn { padding: 11px 20px; font-size: 0.8rem; }
+      .poster-btn-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -583,12 +639,29 @@
       </div>
       <!-- ============ END DAILY POSTER CONTENT ============ -->
       <div class="poster-footer">
-        <button class="poster-read-btn" id="posterReadBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          I've Read This
-        </button>
+        <div class="poster-btn-row" id="posterBtnRow">
+          <button class="poster-btn poster-btn-yes" id="posterYesBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            I Have Understood
+          </button>
+          <button class="poster-btn poster-btn-no" id="posterNoBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            Not Understood
+          </button>
+        </div>
+        <div class="poster-wa-panel" id="posterWaPanel">
+          <p class="poster-wa-text">Connect with your Team Lead for clarification:</p>
+          <a href="https://wa.me/919560903198?text=Hi%20TL%2C%20I%20need%20clarification%20on%20today's%20update." target="_blank" class="poster-wa-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+            Chat with TL on WhatsApp
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -736,7 +809,9 @@
 
     (function initPoster() {
       const overlay = document.getElementById('posterOverlay');
-      const readBtn = document.getElementById('posterReadBtn');
+      const yesBtn = document.getElementById('posterYesBtn');
+      const noBtn = document.getElementById('posterNoBtn');
+      const waPanel = document.getElementById('posterWaPanel');
       const dateEl = document.getElementById('posterDate');
 
       // Set today's date in the header
@@ -763,14 +838,20 @@
         overlay.style.display = 'flex';
       }
 
-      // "I've Read This" button
-      readBtn.addEventListener('click', () => {
+      // "I Have Understood" → save & dismiss
+      yesBtn.addEventListener('click', () => {
         localStorage.setItem('gsk_poster_data', JSON.stringify({
           version: POSTER_VERSION,
           timestamp: Date.now()
         }));
         overlay.classList.add('hiding');
         setTimeout(() => { overlay.style.display = 'none'; }, 350);
+      });
+
+      // "Not Understood" → show WhatsApp TL panel
+      noBtn.addEventListener('click', () => {
+        waPanel.classList.add('show');
+        noBtn.style.display = 'none';
       });
     })();
   </script>
