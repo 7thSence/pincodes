@@ -1,252 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Service Mapping Selector</title>
-
+  <meta name="description" content="6-Series Service Mapping Tool — GSK Agent Hub" />
+  <title>6-Series — GSK Agent Hub</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      padding: 30px;
-    }
+    .service-page-content { max-width: 800px; }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #222;
+    /* Dropdowns */
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
     }
-
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      max-width: 900px;
-      margin: auto;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    label {
+    .filter-group label {
       display: block;
-      margin-top: 20px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      font-weight: 600;
       margin-bottom: 8px;
-      font-weight: bold;
     }
-
-    select {
+    .filter-select {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      font-family: var(--font-family);
+      font-weight: 500;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238888a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      transition: all var(--duration-normal) ease;
+    }
+    .filter-select:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px var(--accent-purple-glow);
+    }
+    .filter-select option {
+      background: #1a1a2e;
+      color: var(--text-primary);
     }
 
-    table {
-      width: 100%;
-      margin-top: 30px;
-      border-collapse: collapse;
+    /* Quick search */
+    .quick-search {
+      margin-bottom: 20px;
+    }
+    .quick-search .search-input {
+      padding-left: 52px;
     }
 
-    th {
-      background: #0ea5e9;
-      color: white;
-      padding: 12px;
+    /* Results meta */
+    .svc-results-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .svc-results-meta span { color: var(--accent-cyan); font-weight: 700; }
+    .svc-clear-btn {
+      background: none;
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-family: var(--font-family);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration-fast) ease;
+    }
+    .svc-clear-btn:hover {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
     }
 
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
+    /* Result cards */
+    .svc-results { display: flex; flex-direction: column; gap: 10px; max-height: calc(100vh - 420px); overflow-y: auto; padding-right: 4px; }
+    .svc-results::-webkit-scrollbar { width: 5px; }
+    .svc-results::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: 10px; }
+
+    .svc-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: all var(--duration-fast) ease;
+      animation: fadeInUp 0.25s var(--ease-out) both;
+    }
+    .svc-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateX(4px);
+    }
+    .svc-card-info { flex: 1; min-width: 0; }
+    .svc-card-desc {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 6px;
+      line-height: 1.3;
+    }
+    .svc-card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .svc-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.15);
+    }
+    .svc-tag.tag-type {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--accent-cyan);
+      border-color: rgba(6, 182, 212, 0.15);
+    }
+    .svc-card-code {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+    .svc-copy-btn {
+      flex-shrink: 0;
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--duration-fast) ease;
+    }
+    .svc-copy-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.08);
     }
 
-    tr:hover {
-      background: #f1f5f9;
-    }
+    /* Empty / initial state */
+    .svc-empty { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+    .svc-empty .empty-icon { font-size: 2.2rem; margin-bottom: 14px; opacity: 0.5; }
+    .svc-empty p { font-size: 0.92rem; line-height: 1.5; }
 
-    .no-result {
-      text-align: center;
-      margin-top: 20px;
-      color: red;
-      font-weight: bold;
+    /* Toast */
+    .copy-toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--accent-cyan); color: #0a0a0f;
+      padding: 12px 28px; border-radius: var(--radius-full);
+      font-size: 0.85rem; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: all 0.3s var(--ease-out); z-index: 999;
+      box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
+    }
+    .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 600px) {
+      .filter-row { grid-template-columns: 1fr; gap: 12px; }
+      .svc-card { flex-direction: column; align-items: flex-start; }
+      .svc-card-code { margin-top: 8px; }
     }
   </style>
 </head>
-
 <body>
 
-  <h1>Service Mapping Tool</h1>
+  <!-- Navigation -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-brand-icon">⚡</div>
+        <div class="nav-brand-text"><span>GSK</span> Agent Hub</div>
+      </a>
+      <a href="index.html" class="nav-back" id="nav-back-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back
+      </a>
+    </div>
+  </nav>
 
-  <div class="card">
+  <!-- Header -->
+  <header class="page-header animate-in">
+    <h1><span class="gradient-text">6-Series</span> Service Mapping</h1>
+    <p class="subtitle">Find service article codes by brand and service type — or search directly.</p>
+  </header>
 
-    <label>Select Brand</label>
-    <select id="brandSelect">
-      <option value="">-- Select Brand --</option>
-    </select>
+  <!-- Content -->
+  <main class="page-content service-page-content">
 
-    <label>Select Service Type</label>
-    <select id="typeSelect">
-      <option value="">-- Select Service Type --</option>
-    </select>
+    <!-- Quick Search -->
+    <div class="quick-search animate-in animate-in-delay-1">
+      <div class="search-wrapper">
+        <input type="text" id="quickSearch" class="search-input" placeholder="Quick search descriptions or codes..." autocomplete="off" />
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+    </div>
 
-    <table id="resultTable">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Article Code</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- Filters -->
+    <div class="filter-row animate-in animate-in-delay-2">
+      <div class="filter-group">
+        <label for="brandSelect">Brand</label>
+        <select id="brandSelect" class="filter-select">
+          <option value="">All Brands</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="typeSelect">Service Type</label>
+        <select id="typeSelect" class="filter-select">
+          <option value="">All Types</option>
+        </select>
+      </div>
+    </div>
 
-    <div id="noResult" class="no-result"></div>
+    <!-- Results Meta -->
+    <div id="resultsMeta" class="svc-results-meta" style="display:none;">
+      <div><span id="resultsCount">0</span> services found</div>
+      <button class="svc-clear-btn" id="clearBtn">Clear Filters</button>
+    </div>
 
-  </div>
+    <!-- Results -->
+    <div id="svcResults" class="svc-results"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="svc-empty animate-in animate-in-delay-3">
+      <div class="empty-icon">⚙️</div>
+      <p>Select a brand and service type, or search to find 6-series article codes.</p>
+    </div>
+
+    <!-- No Results -->
+    <div id="noResults" class="error-msg" style="display:none;">No matching services found.</div>
+  </main>
+
+  <!-- Toast -->
+  <div id="copyToast" class="copy-toast">Copied!</div>
 
   <script>
-
     const services = [
-
-      { brand: '-', type: 'unInstallation', description: 'GT uninstalltion', article: '600501733' },
-      { brand: 'BPL', type: 'PMS', description: 'WM MAINTENANCE SERVICE', article: '600562588' },
-      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION PBG', article: '600615496' },
-      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION PBG CAC', article: '600615498' },
-      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION CHARGABLE', article: '600500102' },
-      { brand: 'BPL', type: 'PMS', description: 'WATERPURIFIER MAINTENANCE WITHOUT FILTER', article: '600562586' },
-      { brand: 'BPL', type: 'PMS', description: 'WATER PURIFIER MAINTENANCE WITH FILTER', article: '600562575' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'WALL FAN-REPAIR', article: '600528447' },
-      { brand: 'BPL', type: 'Installation', description: 'WALL FAN-INSTALLATION-CAC', article: '600528474' },
-      { brand: 'BPL', type: 'TRIMMER REPAIR', description: 'TRIMMER REPAIR', article: '600646906' },
-      { brand: 'BPL', type: 'Installation', description: 'SPLIT AC INSTALLATION PBG', article: '600615497' },
-      { brand: 'BPL', type: 'Installation', description: 'SPLIT AC INSTALLATION PBG CAC', article: '600615499' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'Refrigerator Direct Cool 185 LTR TO 230R', article: '600506011' },
-      { brand: 'BPL', type: 'PMS', description: 'REF MAINTENANCE SERVICE', article: '600562587' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'PEDESTAL FAN-REPAIR', article: '600528446' },
-      { brand: 'BPL', type: 'Demo', description: 'PEDESTAL FAN-DEMO-CAC', article: '600528464' },
-      { brand: 'BPL', type: 'PMS', description: 'MWO MAINTENANCE SERVICE', article: '600503978' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV Upto 20 Repair', article: '600506386' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 50 & Above Repair', article: '600506391' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 41 to 49 Repair', article: '600506390' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 40 Repair', article: '600506389' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 31 to 39 Repair', article: '600506388' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 21 to 30 Repair', article: '600506387' },
-      { brand: 'BPL', type: 'PMS', description: 'HTIB/AUDIO MAINTENANCE SERVICE', article: '600503991' },
-      { brand: 'BPL', type: 'PMS', description: 'HETV MAINTENANCE SERVICE', article: '600503981' },
-      { brand: 'BPL', type: 'PMS', description: 'GEYSER MAINTENANCE SERVICE', article: '600503977' },
-      { brand: 'BPL', type: 'Geyser Installation', description: 'Geyser Installation', article: '600500033' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'EXHAUST FAN-REPAIR', article: '600528445' },
-      { brand: 'BPL', type: 'Installation', description: 'EXHAUST FAN-INSTALLATION-CAC', article: '600528473' },
-      { brand: 'BPL', type: 'PMS', description: 'DISH WASHER MAINTENANCE SERVICE', article: '600562578' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'CELING FAN NORMAL-REPAIR', article: '600528444' },
-      { brand: 'BPL', type: 'Installation', description: 'CELING FAN NORMAL-INSTALLATION-CAC', article: '600528472' },
-      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'CELING FAN HIGH END-REPAIR', article: '600528443' },
-      { brand: 'BPL', type: 'Installation', description: 'CELING FAN HIGH END-INSTALLATION-CAC', article: '600528471' },
-      { brand: 'BPL', type: 'Installation', description: 'BPL 32 & ABOVE TV INSTALLATION-POS', article: '600528105' },
-      { brand: 'BPL', type: 'Installation', description: 'BPL 32 & ABOVE TV INSTALLATION-CAC', article: '600528106' },
-      { brand: 'BPL', type: 'Installation', description: 'BPL 24 TV INSTALLATION CHG-POS', article: '600528103' },
-      { brand: 'BPL', type: 'Installation', description: 'BPL 24 TV INSTALLATION CHG-CAC', article: '600528104' },
-      { brand: 'BPL', type: 'PMS', description: 'AC WET MAINTENANCE SERVICE', article: '600562584' },
-      { brand: 'BPL', type: 'PMS', description: 'AC JET MAINTENANCE SERVICE', article: '600562585' },
-      { brand: 'BPL', type: 'PMS', description: 'AC DRY MAINTENANCE SERVICE', article: '600505990' },
-      { brand: 'BPL', type: 'Repair', description: 'AC', article: '600506001' },
-      { brand: 'BPL', type: 'PMS', description: 'AC', article: '600505995' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'WM FL', article: '600506007' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Washing Machine Semi Automatic Repair', article: '600506009' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Washing Machine FA Top Loading Repair', article: '600506008' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Refrigerator Direct Cool up to 184 Ltr R', article: '600506010' },
-      { brand: 'BPL/Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT REF FROST FREE DEMO-CAC', article: '600524888' },
-      { brand: 'BPL/Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT REF DIRECT COOL DEMO CHG-CAC', article: '600524886' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref Upto 299 Ltrs Repair', article: '600506398' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 600 Ltrs & Above Repair', article: '600506402' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 500 to 599 Ltrs Repair', article: '600506401' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 400 to 499 Ltrs Repair', article: '600506400' },
-      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 300 to 399 Ltrs Repair', article: '600506399' },
-      { brand: 'BPL/Kelvinator', type: 'COOLER', description: 'COOLER', article: '600519229 / 600519231' },
-      { brand: 'BPL/Kelvinator/ LYF', type: 'REPAIR ARTICLE', description: 'Washing Machine FA Front Loading up to 6', article: '600506006' },
-      { brand: 'GNG', type: 'REPAIR ARTICLE', description: 'small appliance (GNG), Induction Repair', article: '600517060' },
-      { brand: 'Kelvinator', type: 'Installation', description: 'KELVINATOR SAC INST CHARGABLE-CAC', article: '600524572' },
-      { brand: 'Kelvinator', type: 'REPAIR ARTICLE', description: 'kelvinator OTG demo', article: '600500094' },
-      { brand: 'Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT SEMI & TOP LOAD WM DEMO CHG-CAC', article: '600527994' },
-      { brand: 'Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT FRONT LOAD WM DEMO FREE-CAC', article: '600527996' },
-      { brand: 'Kelvinator', type: 'REPAIR ARTICLE', description: 'Dishwasher Repair', article: '600519862' },
-      { brand: 'Kelvinator', type: 'Demo', description: 'DISHWASHER DEMO', article: '600500016' },
-      { brand: 'Reconnect', type: 'REECONNECT TV Installation', description: 'REECONNECT TV Installation', article: '600500071' }
-
+      {brand:'-',type:'unInstallation',description:'GT uninstalltion',article:'600501733'},
+      {brand:'BPL',type:'PMS',description:'WM MAINTENANCE SERVICE',article:'600562588'},
+      {brand:'BPL',type:'Installation',description:'WINDOW AC INSTALLATION PBG',article:'600615496'},
+      {brand:'BPL',type:'Installation',description:'WINDOW AC INSTALLATION PBG CAC',article:'600615498'},
+      {brand:'BPL',type:'Installation',description:'WINDOW AC INSTALLATION CHARGABLE',article:'600500102'},
+      {brand:'BPL',type:'PMS',description:'WATERPURIFIER MAINTENANCE WITHOUT FILTER',article:'600562586'},
+      {brand:'BPL',type:'PMS',description:'WATER PURIFIER MAINTENANCE WITH FILTER',article:'600562575'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'WALL FAN-REPAIR',article:'600528447'},
+      {brand:'BPL',type:'Installation',description:'WALL FAN-INSTALLATION-CAC',article:'600528474'},
+      {brand:'BPL',type:'TRIMMER REPAIR',description:'TRIMMER REPAIR',article:'600646906'},
+      {brand:'BPL',type:'Installation',description:'SPLIT AC INSTALLATION PBG',article:'600615497'},
+      {brand:'BPL',type:'Installation',description:'SPLIT AC INSTALLATION PBG CAC',article:'600615499'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'Refrigerator Direct Cool 185 LTR TO 230R',article:'600506011'},
+      {brand:'BPL',type:'PMS',description:'REF MAINTENANCE SERVICE',article:'600562587'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'PEDESTAL FAN-REPAIR',article:'600528446'},
+      {brand:'BPL',type:'Demo',description:'PEDESTAL FAN-DEMO-CAC',article:'600528464'},
+      {brand:'BPL',type:'PMS',description:'MWO MAINTENANCE SERVICE',article:'600503978'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV Upto 20 Repair',article:'600506386'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV 50 & Above Repair',article:'600506391'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV 41 to 49 Repair',article:'600506390'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV 40 Repair',article:'600506389'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV 31 to 39 Repair',article:'600506388'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'LED TV 21 to 30 Repair',article:'600506387'},
+      {brand:'BPL',type:'PMS',description:'HTIB/AUDIO MAINTENANCE SERVICE',article:'600503991'},
+      {brand:'BPL',type:'PMS',description:'HETV MAINTENANCE SERVICE',article:'600503981'},
+      {brand:'BPL',type:'PMS',description:'GEYSER MAINTENANCE SERVICE',article:'600503977'},
+      {brand:'BPL',type:'Geyser Installation',description:'Geyser Installation',article:'600500033'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'EXHAUST FAN-REPAIR',article:'600528445'},
+      {brand:'BPL',type:'Installation',description:'EXHAUST FAN-INSTALLATION-CAC',article:'600528473'},
+      {brand:'BPL',type:'PMS',description:'DISH WASHER MAINTENANCE SERVICE',article:'600562578'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'CELING FAN NORMAL-REPAIR',article:'600528444'},
+      {brand:'BPL',type:'Installation',description:'CELING FAN NORMAL-INSTALLATION-CAC',article:'600528472'},
+      {brand:'BPL',type:'REPAIR ARTICLE',description:'CELING FAN HIGH END-REPAIR',article:'600528443'},
+      {brand:'BPL',type:'Installation',description:'CELING FAN HIGH END-INSTALLATION-CAC',article:'600528471'},
+      {brand:'BPL',type:'Installation',description:'BPL 32 & ABOVE TV INSTALLATION-POS',article:'600528105'},
+      {brand:'BPL',type:'Installation',description:'BPL 32 & ABOVE TV INSTALLATION-CAC',article:'600528106'},
+      {brand:'BPL',type:'Installation',description:'BPL 24 TV INSTALLATION CHG-POS',article:'600528103'},
+      {brand:'BPL',type:'Installation',description:'BPL 24 TV INSTALLATION CHG-CAC',article:'600528104'},
+      {brand:'BPL',type:'PMS',description:'AC WET MAINTENANCE SERVICE',article:'600562584'},
+      {brand:'BPL',type:'PMS',description:'AC JET MAINTENANCE SERVICE',article:'600562585'},
+      {brand:'BPL',type:'PMS',description:'AC DRY MAINTENANCE SERVICE',article:'600505990'},
+      {brand:'BPL',type:'Repair',description:'AC',article:'600506001'},
+      {brand:'BPL',type:'PMS',description:'AC',article:'600505995'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'WM FL',article:'600506007'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'Washing Machine Semi Automatic Repair',article:'600506009'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'Washing Machine FA Top Loading Repair',article:'600506008'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'Refrigerator Direct Cool up to 184 Ltr R',article:'600506010'},
+      {brand:'BPL/Kelvinator',type:'GT DEMO INSTALLATION',description:'KEL GT REF FROST FREE DEMO-CAC',article:'600524888'},
+      {brand:'BPL/Kelvinator',type:'GT DEMO INSTALLATION',description:'KEL GT REF DIRECT COOL DEMO CHG-CAC',article:'600524886'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'FF Ref Upto 299 Ltrs Repair',article:'600506398'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'FF Ref 600 Ltrs & Above Repair',article:'600506402'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'FF Ref 500 to 599 Ltrs Repair',article:'600506401'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'FF Ref 400 to 499 Ltrs Repair',article:'600506400'},
+      {brand:'BPL/Kelvinator',type:'REPAIR ARTICLE',description:'FF Ref 300 to 399 Ltrs Repair',article:'600506399'},
+      {brand:'BPL/Kelvinator',type:'COOLER',description:'COOLER',article:'600519229 / 600519231'},
+      {brand:'BPL/Kelvinator/ LYF',type:'REPAIR ARTICLE',description:'Washing Machine FA Front Loading up to 6',article:'600506006'},
+      {brand:'GNG',type:'REPAIR ARTICLE',description:'small appliance (GNG), Induction Repair',article:'600517060'},
+      {brand:'Kelvinator',type:'Installation',description:'KELVINATOR SAC INST CHARGABLE-CAC',article:'600524572'},
+      {brand:'Kelvinator',type:'REPAIR ARTICLE',description:'kelvinator OTG demo',article:'600500094'},
+      {brand:'Kelvinator',type:'GT DEMO INSTALLATION',description:'KEL GT SEMI & TOP LOAD WM DEMO CHG-CAC',article:'600527994'},
+      {brand:'Kelvinator',type:'GT DEMO INSTALLATION',description:'KEL GT FRONT LOAD WM DEMO FREE-CAC',article:'600527996'},
+      {brand:'Kelvinator',type:'REPAIR ARTICLE',description:'Dishwasher Repair',article:'600519862'},
+      {brand:'Kelvinator',type:'Demo',description:'DISHWASHER DEMO',article:'600500016'},
+      {brand:'Reconnect',type:'REECONNECT TV Installation',description:'REECONNECT TV Installation',article:'600500071'}
     ];
 
+    // DOM
     const brandSelect = document.getElementById('brandSelect');
     const typeSelect = document.getElementById('typeSelect');
-    const resultTable = document.querySelector('#resultTable tbody');
-    const noResult = document.getElementById('noResult');
+    const quickSearch = document.getElementById('quickSearch');
+    const resultsContainer = document.getElementById('svcResults');
+    const resultsMeta = document.getElementById('resultsMeta');
+    const resultsCount = document.getElementById('resultsCount');
+    const emptyState = document.getElementById('emptyState');
+    const noResults = document.getElementById('noResults');
+    const clearBtn = document.getElementById('clearBtn');
 
+    // Populate brands
     const brands = [...new Set(services.map(s => s.brand))].sort();
-
-    brands.forEach(brand => {
-      const option = document.createElement('option');
-      option.value = brand;
-      option.textContent = brand;
-      brandSelect.appendChild(option);
+    brands.forEach(b => {
+      const o = document.createElement('option');
+      o.value = b; o.textContent = b;
+      brandSelect.appendChild(o);
     });
 
+    // Update types when brand changes
     brandSelect.addEventListener('change', () => {
-
-      typeSelect.innerHTML = '<option value="">-- Select Service Type --</option>';
-      resultTable.innerHTML = '';
-      noResult.innerHTML = '';
-
-      const selectedBrand = brandSelect.value;
-
-      const filteredTypes = [...new Set(
-        services
-          .filter(s => s.brand === selectedBrand)
-          .map(s => s.type)
-      )].sort();
-
-      filteredTypes.forEach(type => {
-        const option = document.createElement('option');
-        option.value = type;
-        option.textContent = type;
-        typeSelect.appendChild(option);
-      });
-
+      const sel = brandSelect.value;
+      typeSelect.innerHTML = '<option value="">All Types</option>';
+      if (sel) {
+        const types = [...new Set(services.filter(s => s.brand === sel).map(s => s.type))].sort();
+        types.forEach(t => {
+          const o = document.createElement('option');
+          o.value = t; o.textContent = t;
+          typeSelect.appendChild(o);
+        });
+      }
+      renderResults();
     });
 
+    typeSelect.addEventListener('change', renderResults);
 
-    typeSelect.addEventListener('change', () => {
+    let debounce;
+    quickSearch.addEventListener('input', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(renderResults, 150);
+    });
 
-      resultTable.innerHTML = '';
-      noResult.innerHTML = '';
+    clearBtn.addEventListener('click', () => {
+      brandSelect.value = '';
+      typeSelect.innerHTML = '<option value="">All Types</option>';
+      quickSearch.value = '';
+      renderResults();
+    });
 
-      const selectedBrand = brandSelect.value;
-      const selectedType = typeSelect.value;
+    function renderResults() {
+      const brand = brandSelect.value;
+      const type = typeSelect.value;
+      const query = quickSearch.value.trim().toLowerCase();
 
-      const results = services.filter(service =>
-        service.brand === selectedBrand &&
-        service.type === selectedType
-      );
-
-      if (results.length === 0) {
-        noResult.innerHTML = 'No Results Found';
+      if (!brand && !type && !query) {
+        resultsContainer.innerHTML = '';
+        resultsMeta.style.display = 'none';
+        noResults.style.display = 'none';
+        emptyState.style.display = 'block';
         return;
       }
 
-      results.forEach(service => {
+      emptyState.style.display = 'none';
 
-        const row = document.createElement('tr');
+      let filtered = services;
+      if (brand) filtered = filtered.filter(s => s.brand === brand);
+      if (type) filtered = filtered.filter(s => s.type === type);
+      if (query) filtered = filtered.filter(s =>
+        s.description.toLowerCase().includes(query) ||
+        s.article.toLowerCase().includes(query) ||
+        s.brand.toLowerCase().includes(query) ||
+        s.type.toLowerCase().includes(query)
+      );
 
-        row.innerHTML = `
-      <td>${service.description}</td>
-      <td>${service.article}</td>
-    `;
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML = '';
+        resultsMeta.style.display = 'none';
+        noResults.style.display = 'block';
+        return;
+      }
 
-        resultTable.appendChild(row);
+      noResults.style.display = 'none';
+      resultsCount.textContent = filtered.length;
+      resultsMeta.style.display = 'flex';
 
-      });
+      resultsContainer.innerHTML = filtered.map((s, i) => `
+        <div class="svc-card" style="animation-delay:${i * 0.03}s">
+          <div class="svc-card-info">
+            <p class="svc-card-desc">${s.description}</p>
+            <div class="svc-card-tags">
+              <span class="svc-tag">${s.brand}</span>
+              <span class="svc-tag tag-type">${s.type}</span>
+            </div>
+          </div>
+          <span class="svc-card-code">${s.article}</span>
+          <button class="svc-copy-btn" onclick="copyCode('${s.article}')" title="Copy code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    }
 
-    });
-
+    function copyCode(code) {
+      navigator.clipboard.writeText(code);
+      const toast = document.getElementById('copyToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
   </script>
-
 </body>
-
 </html>
