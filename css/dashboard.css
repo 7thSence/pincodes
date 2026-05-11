@@ -215,7 +215,7 @@ body::before {
   margin: 40px auto 60px;
   padding: 0 24px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   position: relative;
   z-index: 1;
