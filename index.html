@@ -319,9 +319,175 @@
       .stats-bar { gap: 24px; }
       .stat-value { font-size: 1.2rem; }
     }
+
+    /* ---- Poster Popup Overlay ---- */
+    .poster-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(5, 5, 12, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      animation: posterFadeIn 0.4s var(--ease-out) forwards;
+    }
+
+    .poster-overlay.hiding {
+      animation: posterFadeOut 0.35s ease forwards;
+    }
+
+    @keyframes posterFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes posterFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    @keyframes posterSlideUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .poster-card {
+      position: relative;
+      max-width: 600px;
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.08);
+      animation: posterSlideUp 0.5s var(--ease-out) 0.1s both;
+    }
+
+    .poster-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .poster-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .poster-header-dot {
+      width: 8px; height: 8px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .poster-header-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--accent-orange);
+    }
+
+    .poster-header-date {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .poster-image-wrap {
+      width: 100%;
+      max-height: 65vh;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      background: #0d0d15;
+    }
+
+    .poster-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .poster-footer {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .poster-read-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      font-size: 0.9rem;
+      font-family: var(--font-family);
+      font-weight: 700;
+      color: #fff;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-spring);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+      letter-spacing: 0.02em;
+    }
+
+    .poster-read-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.45);
+    }
+
+    .poster-read-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .poster-read-btn svg {
+      width: 18px; height: 18px;
+    }
+
+    @media (max-width: 600px) {
+      .poster-card { border-radius: var(--radius-md); }
+      .poster-read-btn { padding: 12px 28px; font-size: 0.85rem; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Poster Popup Overlay (controlled by JS) -->
+  <div class="poster-overlay" id="posterOverlay" style="display:none;">
+    <div class="poster-card">
+      <div class="poster-header">
+        <div class="poster-header-left">
+          <span class="poster-header-dot"></span>
+          <span class="poster-header-title">Daily Update</span>
+        </div>
+        <span class="poster-header-date" id="posterDate"></span>
+      </div>
+      <div class="poster-image-wrap">
+        <!-- UPDATE THIS: Replace poster.jpg with your daily poster image -->
+        <img src="poster.jpg" alt="Daily Update Poster" id="posterImage" onerror="this.closest('.poster-overlay').style.display='none'" />
+      </div>
+      <div class="poster-footer">
+        <button class="poster-read-btn" id="posterReadBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          I've Read This
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Navigation -->
   <nav class="nav-bar">
@@ -457,6 +623,52 @@
     const s = document.createElement('style');
     s.textContent = `@keyframes rippleEffect { to { transform: scale(2.5); opacity: 0; } }`;
     document.head.appendChild(s);
+
+    // ---- POSTER POPUP SYSTEM ----
+    // Change this date string whenever you update the poster image.
+    // This forces all agents to see the new poster regardless of their timer.
+    const POSTER_VERSION = '2026-05-12';
+    const COOLDOWN_HOURS = 12; // hours before showing again
+
+    (function initPoster() {
+      const overlay = document.getElementById('posterOverlay');
+      const readBtn = document.getElementById('posterReadBtn');
+      const dateEl = document.getElementById('posterDate');
+
+      // Set today's date in the header
+      dateEl.textContent = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      // Check localStorage
+      const stored = localStorage.getItem('gsk_poster_data');
+      let shouldShow = true;
+
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          const elapsed = Date.now() - data.timestamp;
+          const cooldownMs = COOLDOWN_HOURS * 60 * 60 * 1000;
+
+          // Skip if same version AND within cooldown period
+          if (data.version === POSTER_VERSION && elapsed < cooldownMs) {
+            shouldShow = false;
+          }
+        } catch(e) { /* corrupted data, show popup */ }
+      }
+
+      if (shouldShow) {
+        overlay.style.display = 'flex';
+      }
+
+      // "I've Read This" button
+      readBtn.addEventListener('click', () => {
+        localStorage.setItem('gsk_poster_data', JSON.stringify({
+          version: POSTER_VERSION,
+          timestamp: Date.now()
+        }));
+        overlay.classList.add('hiding');
+        setTimeout(() => { overlay.style.display = 'none'; }, 350);
+      });
+    })();
   </script>
 </body>
 </html>
