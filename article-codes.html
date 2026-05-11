@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search product article codes — GSK Agent Hub" />
+    <title>Article Codes — GSK Agent Hub</title>
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand">
+          <div class="nav-brand-icon">⚡</div>
+          <div class="nav-brand-text"><span>GSK</span> Agent Hub</div>
+        </a>
+        <a href="index.html" class="nav-back" id="nav-back-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Back
+        </a>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header animate-in">
+      <h1><span class="gradient-text">Article Code</span> Lookup</h1>
+      <p class="subtitle">Search by model name or article code to find product details instantly.</p>
+    </header>
+
+    <!-- Search & Results -->
+    <main class="page-content article-page-content">
+      <div class="search-wrapper animate-in animate-in-delay-1">
+        <input
+          type="text"
+          id="articleSearchBox"
+          class="search-input"
+          placeholder="Search model or article code..."
+          autocomplete="off"
+        />
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+
+      <div id="resultsMeta" class="results-meta" style="display:none;">
+        <span id="resultsCount">0</span> results found
+      </div>
+
+      <div id="articleResults" class="article-results"></div>
+
+      <div id="emptyState" class="article-empty-state animate-in animate-in-delay-2">
+        <div class="empty-icon">🔍</div>
+        <p>Type a model name or article code to begin searching.</p>
+      </div>
+
+      <div id="noResults" class="error-msg" style="display:none;">
+        No matching products found. Try a different search term.
+      </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="copyToast" class="copy-toast">Copied to clipboard!</div>
+
+    <!-- Load product data -->
+    <script src="js/product-data.js"></script>
+
+    <script>
+      // Deduplicate data at load time
+      const seen = new Set();
+      const uniqueData = productData.filter(item => {
+        const key = item.model + '|' + item.articleCode;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      const searchBox = document.getElementById('articleSearchBox');
+      const resultsContainer = document.getElementById('articleResults');
+      const resultsMeta = document.getElementById('resultsMeta');
+      const resultsCount = document.getElementById('resultsCount');
+      const emptyState = document.getElementById('emptyState');
+      const noResults = document.getElementById('noResults');
+
+      let debounceTimer;
+      searchBox.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(doSearch, 150);
+      });
+
+      function doSearch() {
+        const query = searchBox.value.trim().toLowerCase();
+
+        if (!query) {
+          resultsContainer.innerHTML = '';
+          resultsMeta.style.display = 'none';
+          noResults.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        emptyState.style.display = 'none';
+
+        const matches = uniqueData.filter(item =>
+          item.model.toLowerCase().includes(query) ||
+          String(item.articleCode).includes(query)
+        );
+
+        if (matches.length === 0) {
+          resultsContainer.innerHTML = '';
+          resultsMeta.style.display = 'none';
+          noResults.style.display = 'block';
+          return;
+        }
+
+        noResults.style.display = 'none';
+        const display = matches.slice(0, 80);
+        resultsCount.textContent = matches.length > 80 ? `80 of ${matches.length}` : matches.length;
+        resultsMeta.style.display = 'flex';
+
+        resultsContainer.innerHTML = display.map(item => `
+          <div class="article-card">
+            <div class="article-info">
+              <p class="article-model">${item.model}</p>
+              <p class="article-code">${item.articleCode}</p>
+            </div>
+            <button class="article-copy-btn" onclick="copyCode('${item.articleCode}', this)" title="Copy article code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+        `).join('');
+      }
+
+      function copyCode(code, btn) {
+        navigator.clipboard.writeText(code);
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+    </script>
+  </body>
+</html>
