@@ -1,0 +1,262 @@
+# Full Service Mapping Selector HTML
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Mapping Selector</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #222;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #0ea5e9;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background: #f1f5f9;
+    }
+
+    .no-result {
+      text-align: center;
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Service Mapping Tool</h1>
+
+  <div class="card">
+
+    <label>Select Brand</label>
+    <select id="brandSelect">
+      <option value="">-- Select Brand --</option>
+    </select>
+
+    <label>Select Service Type</label>
+    <select id="typeSelect">
+      <option value="">-- Select Service Type --</option>
+    </select>
+
+    <table id="resultTable">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Article Code</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="noResult" class="no-result"></div>
+
+  </div>
+
+  <script>
+
+    const services = [
+
+      { brand: '-', type: 'unInstallation', description: 'GT uninstalltion', article: '600501733' },
+      { brand: 'BPL', type: 'PMS', description: 'WM MAINTENANCE SERVICE', article: '600562588' },
+      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION PBG', article: '600615496' },
+      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION PBG CAC', article: '600615498' },
+      { brand: 'BPL', type: 'Installation', description: 'WINDOW AC INSTALLATION CHARGABLE', article: '600500102' },
+      { brand: 'BPL', type: 'PMS', description: 'WATERPURIFIER MAINTENANCE WITHOUT FILTER', article: '600562586' },
+      { brand: 'BPL', type: 'PMS', description: 'WATER PURIFIER MAINTENANCE WITH FILTER', article: '600562575' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'WALL FAN-REPAIR', article: '600528447' },
+      { brand: 'BPL', type: 'Installation', description: 'WALL FAN-INSTALLATION-CAC', article: '600528474' },
+      { brand: 'BPL', type: 'TRIMMER REPAIR', description: 'TRIMMER REPAIR', article: '600646906' },
+      { brand: 'BPL', type: 'Installation', description: 'SPLIT AC INSTALLATION PBG', article: '600615497' },
+      { brand: 'BPL', type: 'Installation', description: 'SPLIT AC INSTALLATION PBG CAC', article: '600615499' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'Refrigerator Direct Cool 185 LTR TO 230R', article: '600506011' },
+      { brand: 'BPL', type: 'PMS', description: 'REF MAINTENANCE SERVICE', article: '600562587' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'PEDESTAL FAN-REPAIR', article: '600528446' },
+      { brand: 'BPL', type: 'Demo', description: 'PEDESTAL FAN-DEMO-CAC', article: '600528464' },
+      { brand: 'BPL', type: 'PMS', description: 'MWO MAINTENANCE SERVICE', article: '600503978' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV Upto 20 Repair', article: '600506386' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 50 & Above Repair', article: '600506391' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 41 to 49 Repair', article: '600506390' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 40 Repair', article: '600506389' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 31 to 39 Repair', article: '600506388' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'LED TV 21 to 30 Repair', article: '600506387' },
+      { brand: 'BPL', type: 'PMS', description: 'HTIB/AUDIO MAINTENANCE SERVICE', article: '600503991' },
+      { brand: 'BPL', type: 'PMS', description: 'HETV MAINTENANCE SERVICE', article: '600503981' },
+      { brand: 'BPL', type: 'PMS', description: 'GEYSER MAINTENANCE SERVICE', article: '600503977' },
+      { brand: 'BPL', type: 'Geyser Installation', description: 'Geyser Installation', article: '600500033' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'EXHAUST FAN-REPAIR', article: '600528445' },
+      { brand: 'BPL', type: 'Installation', description: 'EXHAUST FAN-INSTALLATION-CAC', article: '600528473' },
+      { brand: 'BPL', type: 'PMS', description: 'DISH WASHER MAINTENANCE SERVICE', article: '600562578' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'CELING FAN NORMAL-REPAIR', article: '600528444' },
+      { brand: 'BPL', type: 'Installation', description: 'CELING FAN NORMAL-INSTALLATION-CAC', article: '600528472' },
+      { brand: 'BPL', type: 'REPAIR ARTICLE', description: 'CELING FAN HIGH END-REPAIR', article: '600528443' },
+      { brand: 'BPL', type: 'Installation', description: 'CELING FAN HIGH END-INSTALLATION-CAC', article: '600528471' },
+      { brand: 'BPL', type: 'Installation', description: 'BPL 32 & ABOVE TV INSTALLATION-POS', article: '600528105' },
+      { brand: 'BPL', type: 'Installation', description: 'BPL 32 & ABOVE TV INSTALLATION-CAC', article: '600528106' },
+      { brand: 'BPL', type: 'Installation', description: 'BPL 24 TV INSTALLATION CHG-POS', article: '600528103' },
+      { brand: 'BPL', type: 'Installation', description: 'BPL 24 TV INSTALLATION CHG-CAC', article: '600528104' },
+      { brand: 'BPL', type: 'PMS', description: 'AC WET MAINTENANCE SERVICE', article: '600562584' },
+      { brand: 'BPL', type: 'PMS', description: 'AC JET MAINTENANCE SERVICE', article: '600562585' },
+      { brand: 'BPL', type: 'PMS', description: 'AC DRY MAINTENANCE SERVICE', article: '600505990' },
+      { brand: 'BPL', type: 'Repair', description: 'AC', article: '600506001' },
+      { brand: 'BPL', type: 'PMS', description: 'AC', article: '600505995' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'WM FL', article: '600506007' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Washing Machine Semi Automatic Repair', article: '600506009' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Washing Machine FA Top Loading Repair', article: '600506008' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'Refrigerator Direct Cool up to 184 Ltr R', article: '600506010' },
+      { brand: 'BPL/Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT REF FROST FREE DEMO-CAC', article: '600524888' },
+      { brand: 'BPL/Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT REF DIRECT COOL DEMO CHG-CAC', article: '600524886' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref Upto 299 Ltrs Repair', article: '600506398' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 600 Ltrs & Above Repair', article: '600506402' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 500 to 599 Ltrs Repair', article: '600506401' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 400 to 499 Ltrs Repair', article: '600506400' },
+      { brand: 'BPL/Kelvinator', type: 'REPAIR ARTICLE', description: 'FF Ref 300 to 399 Ltrs Repair', article: '600506399' },
+      { brand: 'BPL/Kelvinator', type: 'COOLER', description: 'COOLER', article: '600519229 / 600519231' },
+      { brand: 'BPL/Kelvinator/ LYF', type: 'REPAIR ARTICLE', description: 'Washing Machine FA Front Loading up to 6', article: '600506006' },
+      { brand: 'GNG', type: 'REPAIR ARTICLE', description: 'small appliance (GNG), Induction Repair', article: '600517060' },
+      { brand: 'Kelvinator', type: 'Installation', description: 'KELVINATOR SAC INST CHARGABLE-CAC', article: '600524572' },
+      { brand: 'Kelvinator', type: 'REPAIR ARTICLE', description: 'kelvinator OTG demo', article: '600500094' },
+      { brand: 'Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT SEMI & TOP LOAD WM DEMO CHG-CAC', article: '600527994' },
+      { brand: 'Kelvinator', type: 'GT DEMO INSTALLATION', description: 'KEL GT FRONT LOAD WM DEMO FREE-CAC', article: '600527996' },
+      { brand: 'Kelvinator', type: 'REPAIR ARTICLE', description: 'Dishwasher Repair', article: '600519862' },
+      { brand: 'Kelvinator', type: 'Demo', description: 'DISHWASHER DEMO', article: '600500016' },
+      { brand: 'Reconnect', type: 'REECONNECT TV Installation', description: 'REECONNECT TV Installation', article: '600500071' }
+
+    ];
+
+    const brandSelect = document.getElementById('brandSelect');
+    const typeSelect = document.getElementById('typeSelect');
+    const resultTable = document.querySelector('#resultTable tbody');
+    const noResult = document.getElementById('noResult');
+
+    const brands = [...new Set(services.map(s => s.brand))].sort();
+
+    brands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandSelect.appendChild(option);
+    });
+
+    brandSelect.addEventListener('change', () => {
+
+      typeSelect.innerHTML = '<option value="">-- Select Service Type --</option>';
+      resultTable.innerHTML = '';
+      noResult.innerHTML = '';
+
+      const selectedBrand = brandSelect.value;
+
+      const filteredTypes = [...new Set(
+        services
+          .filter(s => s.brand === selectedBrand)
+          .map(s => s.type)
+      )].sort();
+
+      filteredTypes.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        typeSelect.appendChild(option);
+      });
+
+    });
+
+
+    typeSelect.addEventListener('change', () => {
+
+      resultTable.innerHTML = '';
+      noResult.innerHTML = '';
+
+      const selectedBrand = brandSelect.value;
+      const selectedType = typeSelect.value;
+
+      const results = services.filter(service =>
+        service.brand === selectedBrand &&
+        service.type === selectedType
+      );
+
+      if (results.length === 0) {
+        noResult.innerHTML = 'No Results Found';
+        return;
+      }
+
+      results.forEach(service => {
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+      <td>${service.description}</td>
+      <td>${service.article}</td>
+    `;
+
+        resultTable.appendChild(row);
+
+      });
+
+    });
+
+  </script>
+
+</body>
+
+</html>
+```
+
+Save this as:
+
+`mapping.html`
+
+Then open it in browser.
